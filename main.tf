@@ -19,6 +19,6 @@ resource "azurerm_resource_group" "example" {
 }
 
 resource "azurerm_resource_group" "example_2" {
-  name     = var.resource_group_name
+  name     = var.resource_group_name_2
   location = var.location
 }
