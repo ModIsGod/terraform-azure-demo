@@ -1,4 +1,4 @@
-name: Terraform Deploy
+name: Terragrunt Deploy
 
 on:
   push:
@@ -19,16 +19,25 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform magic
+      - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.7.4
 
-      - name: Init Terraform to kick off
-        run: terraform init
+      - name: Install Terragrunt
+        run: |
+          curl -L https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_amd64 -o terragrunt
+          chmod +x terragrunt
+          sudo mv terragrunt /usr/local/bin/
 
-      - name: Plan it out
-        run: terraform plan -var-file="terraform.tfvars"
+      - name: Run Terragrunt Init
+        working-directory: ./infra/dev/app
+        run: terragrunt init
 
-      - name: Apply the damn thing
-        run: terraform apply -auto-approve -var-file="terraform.tfvars"
+      - name: Terragrunt Plan
+        working-directory: ./infra/dev/app
+        run: terragrunt plan -var-file="terraform.tfvars"
+
+      - name: Terragrunt Apply
+        working-directory: ./infra/dev/app
+        run: terragrunt apply -auto-approve -var-file="terraform.tfvars"
